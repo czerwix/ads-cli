@@ -44,18 +44,15 @@ ls -l ~/.claude/skills/ads-docs-cli
 
 ### Codex CLI
 
-Install:
+Add the contents of `skill/SKILL.md` to your Codex system prompt or project instructions file.
+
+Quick copy command:
 
 ```bash
-mkdir -p ~/.agents/skills/ads-docs-cli
-cp skill/SKILL.md ~/.agents/skills/ads-docs-cli/SKILL.md
+pbcopy < skill/SKILL.md
 ```
 
-Verify:
-
-```bash
-ls -l ~/.agents/skills/ads-docs-cli
-```
+Then paste into your Codex instruction surface.
 
 ## Update Or Reinstall
 
@@ -75,9 +72,7 @@ cp skill/SKILL.md ~/.claude/skills/ads-docs-cli/SKILL.md
 
 Codex CLI
 
-```bash
-cp skill/SKILL.md ~/.agents/skills/ads-docs-cli/SKILL.md
-```
+Re-copy `skill/SKILL.md` and replace the existing instructions in Codex.
 
 ## Uninstall
 
@@ -95,9 +90,7 @@ rm -rf ~/.claude/skills/ads-docs-cli
 
 Codex CLI
 
-```bash
-rm -rf ~/.agents/skills/ads-docs-cli
-```
+Remove the skill text from your Codex system prompt or project instructions file.
 
 ## Use With `ads`
 
@@ -126,5 +119,6 @@ Suggested command flow:
 | Problem | Fix |
 | --- | --- |
 | `cp: skill/SKILL.md: No such file` | Run commands from repo root or replace with absolute path. |
+| `pbcopy: command not found` | Use `cat skill/SKILL.md` and copy manually, or use another clipboard tool. |
 | Skill not appearing in runner | Restart the runner session after install. |
 | Wrong directory path used | Re-run install with the exact path for your runner above. |

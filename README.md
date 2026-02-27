@@ -11,8 +11,7 @@ Fast docs lookup, clean output, and JSON for automation.
 - [Command Reference](#command-reference)
 - [Human CLI Usage](#human-cli-usage)
 - [AI Agent Usage](#ai-agent-usage)
-- [Custom Skill Install](#custom-skill-install)
-- [AI Skill](#ai-skill)
+- [AI Agent Skill](#ai-agent-skill)
 - [Scope and Direction](#scope-and-direction)
 - [Development](#development)
 - [Release Docs](#release-docs)
@@ -110,11 +109,11 @@ Recommended flow for agents:
 
 ---
 
-## Custom Skill Install
+## AI Agent Skill
 
-Detailed setup for Codex CLI, Claude Code, and OpenCode lives in `docs/ai-skill.md`.
+A skill file is included at `skill/SKILL.md` that teaches AI agents how to use `ads`.
 
-Quick copy commands from repo root:
+Install it for your agent of choice:
 
 OpenCode
 
@@ -130,27 +129,15 @@ mkdir -p ~/.claude/skills/ads-docs-cli
 cp skill/SKILL.md ~/.claude/skills/ads-docs-cli/SKILL.md
 ```
 
-Codex CLI
+Codex
 
-```bash
-mkdir -p ~/.agents/skills/ads-docs-cli
-cp skill/SKILL.md ~/.agents/skills/ads-docs-cli/SKILL.md
-```
+Copy the contents of `skill/SKILL.md` into your Codex system prompt or project instructions file.
 
----
+Other agents
 
-## AI Skill
+The skill file is a standalone Markdown document. Feed it to any agent that supports custom instructions or tool documentation.
 
-Agent-ready references:
-
-- `skill/SKILL.md`
-- `docs/ai-skill.md`
-
-Quick setup:
-
-1. Install the skill for your runner (OpenCode, Claude Code, or Codex CLI).
-2. Prefer `ads ... --json` in automation.
-3. Use `ads sources --json` before adding `search` filters.
+Full setup and troubleshooting guide: `docs/ai-skill.md`.
 
 ## Scope and Direction
 
