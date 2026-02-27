@@ -22,7 +22,7 @@ jobs:
         include:
           - os: macos-14
             asset_name: ads-macos-arm64.tar.gz
-          - os: macos-13
+          - os: macos-15-intel
             asset_name: ads-macos-x86_64.tar.gz
 
     steps:
