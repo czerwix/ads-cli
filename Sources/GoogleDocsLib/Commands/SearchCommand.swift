@@ -49,8 +49,8 @@ public enum SearchCommandRunner {
         query: String,
         limit: Int,
         format: RenderFormat,
-        source: String?,
-        kind: ContentKind?,
+        source: String? = nil,
+        kind: ContentKind? = nil,
         officialOnly: Bool = true,
         providers: [any DocsProvider],
         client: HTTPClient
@@ -71,7 +71,7 @@ public enum SearchCommandRunner {
             throw CLIError.network("Search failed for all providers.")
         }
 
-        let merged = mergeResults(resultsByProvider, limit: limit)
+        let merged = mergeResults(resultsByProvider)
         let filtered = applyFilters(
             merged,
             source: normalizedSource(source),
@@ -87,15 +87,11 @@ public enum SearchCommandRunner {
         }
     }
 
-    private static func mergeResults(_ resultsByProvider: [[SearchResult]], limit: Int) -> [SearchResult] {
-        guard limit > 0 else {
-            return []
-        }
-
+    private static func mergeResults(_ resultsByProvider: [[SearchResult]]) -> [SearchResult] {
         var merged: [SearchResult] = []
         var depth = 0
 
-        while merged.count < limit {
+        while true {
             var appended = false
 
             for providerResults in resultsByProvider {
@@ -105,10 +101,6 @@ public enum SearchCommandRunner {
 
                 merged.append(providerResults[depth])
                 appended = true
-
-                if merged.count == limit {
-                    break
-                }
             }
 
             if !appended {

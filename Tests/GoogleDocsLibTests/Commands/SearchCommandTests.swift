@@ -189,6 +189,40 @@ struct SearchCommandTests {
     }
 
     @Test
+    func searchRunnerAppliesSourceFilterBeforeFinalLimit() async throws {
+        let android = StubProvider(
+            source: "android",
+            results: [
+                SearchResult(title: "A1", url: "https://a/1", snippet: "", source: "android", score: 1.0, sourceId: "android", official: true),
+                SearchResult(title: "A2", url: "https://a/2", snippet: "", source: "android", score: 1.0, sourceId: "android", official: true),
+                SearchResult(title: "A3", url: "https://a/3", snippet: "", source: "android", score: 1.0, sourceId: "android", official: true)
+            ]
+        )
+        let kotlin = StubProvider(
+            source: "kotlin",
+            results: [
+                SearchResult(title: "K1", url: "https://k/1", snippet: "", source: "kotlin", score: 1.0, sourceId: "kotlin", official: true),
+                SearchResult(title: "K2", url: "https://k/2", snippet: "", source: "kotlin", score: 1.0, sourceId: "kotlin", official: true),
+                SearchResult(title: "K3", url: "https://k/3", snippet: "", source: "kotlin", score: 1.0, sourceId: "kotlin", official: true)
+            ]
+        )
+
+        let output = try await SearchCommandRunner.run(
+            query: "docs",
+            limit: 3,
+            format: .json,
+            source: "kotlin",
+            kind: nil,
+            officialOnly: true,
+            providers: [android, kotlin],
+            client: HTTPClient(session: .shared, retryPolicy: .init(maxAttempts: 1, baseDelayNanoseconds: 1))
+        )
+
+        let decoded = try JSONDecoder().decode([SearchResult].self, from: Data(output.utf8))
+        #expect(decoded.map(\.title) == ["K1", "K2", "K3"])
+    }
+
+    @Test
     func searchRunnerFiltersByKind() async throws {
         let provider = StubProvider(
             source: "android",
@@ -260,6 +294,61 @@ struct SearchCommandTests {
 
         let decoded = try JSONDecoder().decode([SearchResult].self, from: Data(output.utf8))
         #expect(decoded.map(\.title) == ["Unofficial", "Official"])
+    }
+
+    @Test
+    func searchRunnerAppliesOfficialFilterBeforeFinalLimit() async throws {
+        let android = StubProvider(
+            source: "android",
+            results: [
+                SearchResult(title: "A-Unofficial", url: "https://a/0", snippet: "", source: "android", score: 1.0, official: false),
+                SearchResult(title: "A-Official-1", url: "https://a/1", snippet: "", source: "android", score: 1.0, official: true),
+                SearchResult(title: "A-Official-2", url: "https://a/2", snippet: "", source: "android", score: 1.0, official: true)
+            ]
+        )
+        let kotlin = StubProvider(
+            source: "kotlin",
+            results: [
+                SearchResult(title: "K-Unofficial", url: "https://k/0", snippet: "", source: "kotlin", score: 1.0, official: false),
+                SearchResult(title: "K-Official-1", url: "https://k/1", snippet: "", source: "kotlin", score: 1.0, official: true),
+                SearchResult(title: "K-Official-2", url: "https://k/2", snippet: "", source: "kotlin", score: 1.0, official: true)
+            ]
+        )
+
+        let output = try await SearchCommandRunner.run(
+            query: "docs",
+            limit: 3,
+            format: .json,
+            source: nil,
+            kind: nil,
+            officialOnly: true,
+            providers: [android, kotlin],
+            client: HTTPClient(session: .shared, retryPolicy: .init(maxAttempts: 1, baseDelayNanoseconds: 1))
+        )
+
+        let decoded = try JSONDecoder().decode([SearchResult].self, from: Data(output.utf8))
+        #expect(decoded.map(\.title) == ["A-Official-1", "K-Official-1", "A-Official-2"])
+    }
+
+    @Test
+    func searchRunnerSupportsLegacyRunCallWithoutSourceAndKind() async throws {
+        let provider = StubProvider(
+            source: "android",
+            results: [
+                SearchResult(title: "Compose", url: "https://a/compose", snippet: "", source: "android", score: 1.0, official: true)
+            ]
+        )
+
+        let output = try await SearchCommandRunner.run(
+            query: "compose",
+            limit: 1,
+            format: .json,
+            providers: [provider],
+            client: HTTPClient(session: .shared, retryPolicy: .init(maxAttempts: 1, baseDelayNanoseconds: 1))
+        )
+
+        let decoded = try JSONDecoder().decode([SearchResult].self, from: Data(output.utf8))
+        #expect(decoded.map(\.title) == ["Compose"])
     }
 }
 
