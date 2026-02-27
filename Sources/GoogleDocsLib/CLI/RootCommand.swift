@@ -4,7 +4,7 @@ import ArgumentParser
 public struct RootCommand: AsyncParsableCommand {
     public static let configuration = CommandConfiguration(
         commandName: "ads",
-        abstract: "Search Google Android and Kotlin documentation.",
+        abstract: "Search Google Android, Kotlin, and Jetpack documentation.",
         version: "0.1.0",
         subcommands: [
             SearchCommand.self,

@@ -3,7 +3,7 @@ import ArgumentParser
 public struct SearchCommand: AsyncParsableCommand {
     public static let configuration = CommandConfiguration(
         commandName: "search",
-        abstract: "Search Android and Kotlin documentation."
+        abstract: "Search Android, Kotlin, and Jetpack documentation."
     )
 
     @Argument(help: "Query text")
