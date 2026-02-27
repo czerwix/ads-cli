@@ -121,6 +121,24 @@ struct MarkdownSnapshotTests {
         }
     }
 
+    @Test
+    func jsonSchemaKindContractSnapshot() throws {
+        let root = try repoRootURL()
+        let schema = try String(
+            contentsOf: root.appendingPathComponent("docs/contracts/json-schema.md"),
+            encoding: .utf8
+        )
+
+        let actualKinds = try searchContractKindValues(from: schema)
+        let expectedKinds: Set<String> = ["unknown", "reference", "guide", "tutorial", "sample"]
+
+        #expect(
+            actualKinds == expectedKinds,
+            "Unexpected search kind contract values: \(actualKinds.sorted())"
+        )
+        #expect(!actualKinds.contains("api"), "Search kind contract should not include 'api'")
+    }
+
     private func readmeURL() throws -> URL {
         try repoRootURL().appendingPathComponent("README.md")
     }
@@ -143,5 +161,26 @@ struct MarkdownSnapshotTests {
         }
 
         throw CocoaError(.fileNoSuchFile)
+    }
+
+    private func searchContractKindValues(from schema: String) throws -> Set<String> {
+        guard let line = schema
+            .split(separator: "\n")
+            .first(where: { $0.contains("\"kind\": \"") && $0.contains("|") })
+        else {
+            throw CocoaError(.fileReadCorruptFile)
+        }
+
+        guard let keyRange = line.range(of: "\"kind\": \"") else {
+            throw CocoaError(.fileReadCorruptFile)
+        }
+
+        let valueStart = keyRange.upperBound
+        guard let valueEnd = line[valueStart...].firstIndex(of: "\"") else {
+            throw CocoaError(.fileReadCorruptFile)
+        }
+
+        let value = line[valueStart..<valueEnd]
+        return Set(value.split(separator: "|").map(String.init))
     }
 }

@@ -12,7 +12,7 @@ Returns an array of objects:
     "snippet": "string",
     "source": "string",
     "sourceId": "string",
-    "kind": "reference|guide|sample|api|unknown",
+    "kind": "unknown|reference|guide|tutorial|sample",
     "official": true,
     "score": 1.0
   }
