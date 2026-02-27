@@ -14,6 +14,7 @@ enum SearchHTMLParser {
 
         let range = NSRange(html.startIndex..<html.endIndex, in: html)
         let matches = regex.matches(in: html, options: [], range: range)
+        let sourceDefinition = SourceRegistry.definition(for: source)
 
         var items: [SearchResult] = []
 
@@ -44,8 +45,8 @@ enum SearchHTMLParser {
                     snippet: "",
                     source: source,
                     score: 1.0,
-                    kind: SourceRegistry.definition(for: source)?.kind ?? .unknown,
-                    official: SourceRegistry.definition(for: source)?.official ?? false
+                    kind: sourceDefinition?.kind ?? .unknown,
+                    official: sourceDefinition?.official ?? false
                 )
             )
 

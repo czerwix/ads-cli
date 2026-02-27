@@ -27,4 +27,39 @@ public struct SearchResult: Codable, Equatable, Sendable {
         self.official = official
         self.score = score
     }
+
+    private enum CodingKeys: String, CodingKey {
+        case title
+        case url
+        case snippet
+        case source
+        case sourceId
+        case kind
+        case official
+        case score
+    }
+
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        let title = try container.decode(String.self, forKey: .title)
+        let url = try container.decode(String.self, forKey: .url)
+        let snippet = try container.decode(String.self, forKey: .snippet)
+        let source = try container.decode(String.self, forKey: .source)
+        let score = try container.decode(Double.self, forKey: .score)
+        let sourceId = try container.decodeIfPresent(String.self, forKey: .sourceId) ?? source
+        let kind = try container.decodeIfPresent(ContentKind.self, forKey: .kind) ?? .unknown
+        let official = try container.decodeIfPresent(Bool.self, forKey: .official) ?? false
+
+        self.init(
+            title: title,
+            url: url,
+            snippet: snippet,
+            source: source,
+            score: score,
+            sourceId: sourceId,
+            kind: kind,
+            official: official
+        )
+    }
 }

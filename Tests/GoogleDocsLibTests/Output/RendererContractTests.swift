@@ -47,6 +47,26 @@ struct RendererContractTests {
     }
 
     @Test
+    func searchResultDecodesLegacyJSONWithoutTaxonomyFields() throws {
+        let legacyJSON = #"""
+        {
+          "title": "Android ViewModel",
+          "url": "https://developer.android.com/topic/libraries/architecture/viewmodel",
+          "snippet": "Stores UI-related data.",
+          "source": "android",
+          "score": 0.98
+        }
+        """#
+
+        let decoded = try JSONDecoder().decode(SearchResult.self, from: Data(legacyJSON.utf8))
+
+        #expect(decoded.source == "android")
+        #expect(decoded.sourceId == "android")
+        #expect(decoded.kind == .unknown)
+        #expect(decoded.official == false)
+    }
+
+    @Test
     func jsonDocumentOutputUsesStableKeys() throws {
         let page = DocumentPage(
             title: "ViewModel",
