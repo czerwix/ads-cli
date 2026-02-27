@@ -2,113 +2,68 @@
 
 Search Android, Kotlin, and Jetpack documentation from the terminal.
 
-`ads` is the Google-docs companion to `sad-cli`, focused on fast search, doc retrieval, and machine-readable output for automation.
+Fast docs lookup, clean output, and JSON for automation.
 
-## Install
+## Contents
 
-Homebrew (tap `skraus/tap`):
+- [Quick Start](#quick-start)
+- [Build and Run](#build-and-run)
+- [Command Reference](#command-reference)
+- [Human CLI Usage](#human-cli-usage)
+- [AI Agent Usage](#ai-agent-usage)
+- [AI Skill](#ai-skill)
+- [Scope and Direction](#scope-and-direction)
+- [Development](#development)
+- [Release Docs](#release-docs)
 
-```bash
-brew tap skraus/tap
-brew install ads-cli
-```
+## Quick Start
 
-Upgrade an existing install:
+| Task | Command |
+| --- | --- |
+| Install with Homebrew | `brew tap skraus/tap`<br>`brew install ads-cli` |
+| Upgrade | `brew upgrade ads-cli` |
+| Build from source (Swift 6, macOS 13+) | `swift build -c release` |
+| Show help | `.build/release/ads --help` |
 
-```bash
-brew upgrade ads-cli
-```
+Built binary: `.build/release/ads`
 
-Build from source (Swift 6, macOS 13+):
+## Build and Run
 
-```bash
-swift build -c release
-```
+| Mode | Command |
+| --- | --- |
+| Run without a release build | `swift run ads --help` |
+| Run with the release binary | `.build/release/ads search "compose"` |
 
-The binary will be available at:
+## Command Reference
 
-```bash
-.build/release/ads
-```
+| Command | What it does |
+| --- | --- |
+| `ads search <query> [--limit N] [--source id] [--kind kind] [--[no-]official-only] [--json]` | Search docs across providers |
+| `ads sources [--json]` | List supported sources and metadata |
+| `ads doc <path-or-url> [--json]` | Fetch one document |
+| `ads related <path-or-url> [--json]` | Show related topics for a page |
+| `ads platform <path-or-url> [--json]` | Show page platform metadata |
+| `ads frameworks [--filter text] [--json]` | List framework categories |
 
-Optional local sanity check:
+Default output is Markdown. Add `--json` for structured output.
 
-```bash
-.build/release/ads --help
-```
-
-Maintainer release references:
-
-- Primary guide: `docs/release-homebrew.md`
-- Checklist runbook: `docs/plans/2026-02-27-homebrew-release-runbook.md`
-
-## Build And Run
-
-Run without creating a release build:
-
-```bash
-swift run ads --help
-```
-
-Run a command with the release binary:
-
-```bash
-.build/release/ads search "compose"
-```
-
-## Command Surface
-
-- `ads search <query> [--limit N] [--source id] [--kind kind] [--[no-]official-only] [--json]`
-- `ads sources [--json]`
-- `ads doc <path-or-url> [--json]`
-- `ads related <path-or-url> [--json]`
-- `ads platform <path-or-url> [--json]`
-- `ads frameworks [--filter text] [--json]`
-
-By default, commands print Markdown. Use `--json` for structured output.
+---
 
 ## Human CLI Usage
 
-Search documentation across Android, Kotlin, and Jetpack providers:
+| Goal | Example |
+| --- | --- |
+| Search docs | `ads search "viewmodel" --limit 5`<br>`ads search "navigation" --source android --kind guide` |
+| List sources | `ads sources` |
+| Open one document | `ads doc "topic/libraries/architecture/viewmodel"` |
+| Show related topics | `ads related "topic/libraries/architecture/viewmodel"` |
+| Show platform metadata | `ads platform "topic/libraries/architecture/viewmodel"` |
+| Filter framework list | `ads frameworks --filter compose` |
 
-```bash
-ads search "viewmodel" --limit 5
-ads search "navigation" --source android --kind guide
-```
+## AI Agent Usage
 
-List supported sources and source metadata:
-
-```bash
-ads sources
-```
-
-Retrieve a document by topic path or full URL:
-
-```bash
-ads doc "topic/libraries/architecture/viewmodel"
-```
-
-Show related topics for a page:
-
-```bash
-ads related "topic/libraries/architecture/viewmodel"
-```
-
-Show platform metadata for a page:
-
-```bash
-ads platform "topic/libraries/architecture/viewmodel"
-```
-
-List framework categories (optionally filtered):
-
-```bash
-ads frameworks --filter compose
-```
-
-## AI-Agent Usage
-
-Use JSON mode for deterministic parsing in agent workflows:
+> [!TIP]
+> Use `--json` for deterministic parsing.
 
 ```bash
 ads search "viewmodel" --limit 5 --json
@@ -121,32 +76,34 @@ ads platform "topic/libraries/architecture/viewmodel" --json
 ads frameworks --json
 ```
 
-Recommended pattern for agents:
+Recommended flow for agents:
 
-1. call `search` to discover candidate pages,
-2. resolve one page with `doc`,
-3. expand context via `related` or `platform` as needed.
+1. Run `search` to find candidate pages.
+2. Resolve one page with `doc`.
+3. Expand context with `related` or `platform`.
+
+---
 
 ## AI Skill
 
-Agent-ready references are included in:
+Agent-ready references:
 
 - `skill/SKILL.md`
 - `docs/ai-skill.md`
 
-Quick start:
+Quick setup:
 
 1. Install the skill for your runner (OpenCode, Claude Code, or Codex CLI).
-2. Prefer `ads ... --json` output in automation.
-3. Use `ads sources --json` to discover source IDs and kinds before applying `search` filters.
+2. Prefer `ads ... --json` in automation.
+3. Use `ads sources --json` before adding `search` filters.
 
-## Scope And Direction
+## Scope and Direction
 
 Current behavior:
 
 - `search` fans out across Android, Kotlin, and Jetpack providers.
 - `doc`, `related`, and `platform` currently resolve content via the Android docs provider.
-- `frameworks` returns a local framework catalog and supports Markdown/JSON output.
+- `frameworks` returns a local framework catalog in Markdown or JSON.
 
 Planned expansion (not fully implemented yet):
 
@@ -154,8 +111,17 @@ Planned expansion (not fully implemented yet):
 - improve unified ranking and source attribution across providers,
 - harden output contracts for deeper agent integrations.
 
+---
+
 ## Development
 
 ```bash
 swift test
 ```
+
+## Release Docs
+
+| Document | Purpose |
+| --- | --- |
+| `docs/release-homebrew.md` | Primary release guide |
+| `docs/plans/2026-02-27-homebrew-release-runbook.md` | Step-by-step release checklist |

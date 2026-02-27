@@ -2,7 +2,7 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** Build a Swift CLI (macOS-first) that mirrors `sad-cli` behavior for Android/Kotlin/Jetpack documentation search and retrieval.
+**Goal:** Build a Swift CLI (macOS-first) for Android/Kotlin/Jetpack documentation search and retrieval.
 
 **Architecture:** Keep executable thin and move all logic into a library module. Use provider adapters per source (Android/Kotlin/Jetpack) behind shared protocols, then normalize into one output contract rendered as Markdown or JSON.
 
