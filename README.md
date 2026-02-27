@@ -40,7 +40,8 @@ Run a command with the release binary:
 
 ## Command Surface
 
-- `ads search <query> [--limit N] [--json]`
+- `ads search <query> [--limit N] [--source id] [--kind kind] [--[no-]official-only] [--json]`
+- `ads sources [--json]`
 - `ads doc <path-or-url> [--json]`
 - `ads related <path-or-url> [--json]`
 - `ads platform <path-or-url> [--json]`
@@ -54,6 +55,13 @@ Search documentation across Android, Kotlin, and Jetpack providers:
 
 ```bash
 ads search "viewmodel" --limit 5
+ads search "navigation" --source android --kind guide
+```
+
+List supported sources and source metadata:
+
+```bash
+ads sources
 ```
 
 Retrieve a document by topic path or full URL:
@@ -86,6 +94,9 @@ Use JSON mode for deterministic parsing in agent workflows:
 
 ```bash
 ads search "viewmodel" --limit 5 --json
+ads search "viewmodel" --source android --json
+ads search "navigation" --kind guide --json
+ads sources --json
 ads doc "topic/libraries/architecture/viewmodel" --json
 ads related "topic/libraries/architecture/viewmodel" --json
 ads platform "topic/libraries/architecture/viewmodel" --json
@@ -97,6 +108,19 @@ Recommended pattern for agents:
 1. call `search` to discover candidate pages,
 2. resolve one page with `doc`,
 3. expand context via `related` or `platform` as needed.
+
+## AI Skill
+
+Agent-ready references are included in:
+
+- `skill/SKILL.md`
+- `docs/ai-skill.md`
+
+Quick start:
+
+1. Install the skill for your runner (OpenCode, Claude Code, or Codex CLI).
+2. Prefer `ads ... --json` output in automation.
+3. Use `ads sources --json` to discover source IDs and kinds before applying `search` filters.
 
 ## Scope And Direction
 
