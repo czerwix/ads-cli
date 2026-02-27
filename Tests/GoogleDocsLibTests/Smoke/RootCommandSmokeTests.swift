@@ -10,4 +10,9 @@ struct RootCommandSmokeTests {
         #expect(help.contains("search"))
         #expect(help.contains("sources"))
     }
+
+    @Test
+    func configurationVersionIs012() {
+        #expect(RootCommand.configuration.version == "0.1.2")
+    }
 }
