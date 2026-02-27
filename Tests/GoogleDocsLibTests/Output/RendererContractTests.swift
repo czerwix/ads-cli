@@ -21,6 +21,32 @@ struct RendererContractTests {
     }
 
     @Test
+    func jsonSearchOutputIncludesSourceTaxonomyFields() throws {
+        let result = SearchResult(
+            title: "Android ViewModel",
+            url: "https://developer.android.com/topic/libraries/architecture/viewmodel",
+            snippet: "Stores UI-related data.",
+            source: "android",
+            score: 0.98,
+            kind: .reference,
+            official: true
+        )
+
+        let json = try JSONRenderer.renderSearchResults([result])
+        let decoded = try JSONSerialization.jsonObject(with: Data(json.utf8)) as? [[String: Any]]
+        let first = decoded?.first
+        let source = first?["source"] as? String
+        let sourceId = first?["sourceId"] as? String
+        let kind = first?["kind"] as? String
+        let official = first?["official"] as? Bool
+
+        #expect(source == "android")
+        #expect(sourceId == "android")
+        #expect(kind == "reference")
+        #expect(official == true)
+    }
+
+    @Test
     func jsonDocumentOutputUsesStableKeys() throws {
         let page = DocumentPage(
             title: "ViewModel",

@@ -43,7 +43,9 @@ enum SearchHTMLParser {
                     url: resolvedURL,
                     snippet: "",
                     source: source,
-                    score: 1.0
+                    score: 1.0,
+                    kind: SourceRegistry.definition(for: source)?.kind ?? .unknown,
+                    official: SourceRegistry.definition(for: source)?.official ?? false
                 )
             )
 
