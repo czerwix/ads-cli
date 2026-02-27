@@ -11,6 +11,7 @@ Fast docs lookup, clean output, and JSON for automation.
 - [Command Reference](#command-reference)
 - [Human CLI Usage](#human-cli-usage)
 - [AI Agent Usage](#ai-agent-usage)
+- [Custom Skill Install](#custom-skill-install)
 - [AI Skill](#ai-skill)
 - [Scope and Direction](#scope-and-direction)
 - [Development](#development)
@@ -18,21 +19,46 @@ Fast docs lookup, clean output, and JSON for automation.
 
 ## Quick Start
 
-| Task | Command |
-| --- | --- |
-| Install with Homebrew | `brew tap skraus/tap`<br>`brew install ads-cli` |
-| Upgrade | `brew upgrade ads-cli` |
-| Build from source (Swift 6, macOS 13+) | `swift build -c release` |
-| Show help | `.build/release/ads --help` |
+Install with Homebrew:
+
+```bash
+brew tap skraus/tap
+brew install ads-cli
+```
+
+Upgrade:
+
+```bash
+brew upgrade ads-cli
+```
+
+Build from source (Swift 6, macOS 13+):
+
+```bash
+swift build -c release
+```
+
+Local help check:
+
+```bash
+.build/release/ads --help
+```
 
 Built binary: `.build/release/ads`
 
 ## Build and Run
 
-| Mode | Command |
-| --- | --- |
-| Run without a release build | `swift run ads --help` |
-| Run with the release binary | `.build/release/ads search "compose"` |
+Run without a release build:
+
+```bash
+swift run ads --help
+```
+
+Run with the release binary:
+
+```bash
+.build/release/ads search "compose"
+```
 
 ## Command Reference
 
@@ -81,6 +107,35 @@ Recommended flow for agents:
 1. Run `search` to find candidate pages.
 2. Resolve one page with `doc`.
 3. Expand context with `related` or `platform`.
+
+---
+
+## Custom Skill Install
+
+Detailed setup for Codex CLI, Claude Code, and OpenCode lives in `docs/ai-skill.md`.
+
+Quick copy commands from repo root:
+
+OpenCode
+
+```bash
+mkdir -p ~/.config/opencode/skills/ads-docs-cli
+cp skill/SKILL.md ~/.config/opencode/skills/ads-docs-cli/SKILL.md
+```
+
+Claude Code
+
+```bash
+mkdir -p ~/.claude/skills/ads-docs-cli
+cp skill/SKILL.md ~/.claude/skills/ads-docs-cli/SKILL.md
+```
+
+Codex CLI
+
+```bash
+mkdir -p ~/.agents/skills/ads-docs-cli
+cp skill/SKILL.md ~/.agents/skills/ads-docs-cli/SKILL.md
+```
 
 ---
 
