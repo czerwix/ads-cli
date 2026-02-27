@@ -6,6 +6,19 @@ Search Android, Kotlin, and Jetpack documentation from the terminal.
 
 ## Install
 
+Homebrew (tap `skraus/tap`):
+
+```bash
+brew tap skraus/tap
+brew install ads-cli
+```
+
+Upgrade an existing install:
+
+```bash
+brew upgrade ads-cli
+```
+
 Build from source (Swift 6, macOS 13+):
 
 ```bash
@@ -23,6 +36,11 @@ Optional local sanity check:
 ```bash
 .build/release/ads --help
 ```
+
+Maintainer release references:
+
+- Primary guide: `docs/release-homebrew.md`
+- Checklist runbook: `docs/plans/2026-02-27-homebrew-release-runbook.md`
 
 ## Build And Run
 

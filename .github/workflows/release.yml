@@ -1,0 +1,77 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build ${{ matrix.asset_name }}
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-14
+            asset_name: ads-macos-arm64.tar.gz
+          - os: macos-13
+            asset_name: ads-macos-x86_64.tar.gz
+
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+
+      - uses: swift-actions/setup-swift@7ca6abe6b3b0e8b5421b88be48feee39cbf52c6a
+        with:
+          swift-version: "6.0"
+
+      - name: Build release binary
+        run: swift build -c release --product ads
+
+      - name: Package binary
+        env:
+          ASSET_NAME: ${{ matrix.asset_name }}
+        run: |
+          BIN_DIR="$(swift build -c release --show-bin-path)"
+          tar -czf "$ASSET_NAME" -C "$BIN_DIR" ads
+
+      - name: Upload packaged binary artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ${{ matrix.asset_name }}
+          path: ${{ matrix.asset_name }}
+
+  release:
+    name: Publish release assets
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    timeout-minutes: 15
+    needs: build
+
+    steps:
+      - name: Download packaged artifacts
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: ads-macos-*.tar.gz
+          merge-multiple: true
+          path: dist
+
+      - name: Generate SHA256 checksums
+        run: |
+          cd dist
+          shasum -a 256 ads-macos-*.tar.gz > checksums.txt
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b
+        with:
+          files: |
+            dist/*.tar.gz
+            dist/checksums.txt
