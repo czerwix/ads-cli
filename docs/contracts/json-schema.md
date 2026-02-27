@@ -1,6 +1,6 @@
 # JSON Output Contracts
 
-## search (`sgd search ... --json`)
+## search (`ads search ... --json`)
 
 Returns an array of objects:
 
@@ -16,7 +16,7 @@ Returns an array of objects:
 ]
 ```
 
-## doc (`sgd doc ... --json`)
+## doc (`ads doc ... --json`)
 
 Returns one object:
 
@@ -32,7 +32,7 @@ Returns one object:
 }
 ```
 
-## frameworks (`sgd frameworks --json`)
+## frameworks (`ads frameworks --json`)
 
 Returns an array:
 

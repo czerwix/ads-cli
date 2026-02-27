@@ -1,21 +1,21 @@
-# sgd - Search Google Docs
+# ads - Search Google Docs
 
-`sgd` is a Swift CLI for searching Android, Kotlin, and Jetpack documentation.
+`ads` is a Swift CLI for searching Android, Kotlin, and Jetpack documentation.
 
 ## Install
 
 ```bash
 swift build -c release
-.build/release/sgd --help
+.build/release/ads --help
 ```
 
 ## Commands
 
-- `sgd search <query> [--limit N] [--json]`
-- `sgd doc <path-or-url> [--json]`
-- `sgd related <path-or-url> [--json]`
-- `sgd platform <path-or-url> [--json]`
-- `sgd frameworks [--filter text] [--json]`
+- `ads search <query> [--limit N] [--json]`
+- `ads doc <path-or-url> [--json]`
+- `ads related <path-or-url> [--json]`
+- `ads platform <path-or-url> [--json]`
+- `ads frameworks [--filter text] [--json]`
 
 Markdown is default output. Use `--json` for machine-readable output.
 
@@ -24,8 +24,8 @@ Markdown is default output. Use `--json` for machine-readable output.
 Use JSON mode for deterministic parsing:
 
 ```bash
-sgd search "viewmodel" --limit 5 --json
-sgd doc "topic/libraries/architecture/viewmodel" --json
+ads search "viewmodel" --limit 5 --json
+ads doc "topic/libraries/architecture/viewmodel" --json
 ```
 
 ## Development

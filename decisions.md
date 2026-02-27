@@ -5,7 +5,7 @@ Record key project decisions that were made as implementation defaults during pl
 
 ## Core Decisions
 
-1. **CLI working name (v1):** `sgd`.
+1. **CLI working name (v1):** `ads`.
 2. **Project structure:** thin executable + library module split.
 3. **Provider-adapter design:** one adapter per source.
 4. **Normalized output contract:** one shared schema for all commands/sources.
@@ -25,4 +25,4 @@ Record key project decisions that were made as implementation defaults during pl
 ## 2026-02-27 Orchestration Decisions
 
 - Chose hidden project-local worktree directory `.worktrees/` because no existing worktree directory and no `CLAUDE.md` preference were found.
-- Enforced hard cutover from `sgd` to `ads` with no compatibility shim, since no release exists.
+- Enforced hard cutover to `ads` with no compatibility shim, since no release exists.

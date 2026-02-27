@@ -3,9 +3,10 @@ import Testing
 
 struct RootCommandSmokeTests {
     @Test
-    func helpIncludesSearchSubcommand() throws {
+    func helpReflectsAdsNamingAndIncludesSearchSubcommand() throws {
         let help = RootCommand.helpMessage()
 
+        #expect(help.contains("USAGE: ads"))
         #expect(help.contains("search"))
     }
 }

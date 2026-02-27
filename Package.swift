@@ -2,12 +2,12 @@
 import PackageDescription
 
 let package = Package(
-    name: "sgd",
+    name: "ads",
     platforms: [
         .macOS(.v13)
     ],
     products: [
-        .executable(name: "sgd", targets: ["sgd"]),
+        .executable(name: "ads", targets: ["ads"]),
         .library(name: "GoogleDocsLib", targets: ["GoogleDocsLib"])
     ],
     dependencies: [
@@ -15,7 +15,7 @@ let package = Package(
     ],
     targets: [
         .executableTarget(
-            name: "sgd",
+            name: "ads",
             dependencies: ["GoogleDocsLib"]
         ),
         .target(
