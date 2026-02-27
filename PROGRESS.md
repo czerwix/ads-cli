@@ -18,6 +18,19 @@
 - Quality fixes applied in `f64438d` (legacy JSON decode compatibility, regression test, parser cleanup).
 - Verified by subagents: targeted tests + full suite passing.
 
+## 2026-02-27 - Tasks 4 through 7 Complete
+
+- Task 4 completed via subagent commits `413c3df` and `4648a92` (new providers + resilient best-effort search behavior).
+- Task 5 completed via subagent commits `ba6986a` and `c16a765` (`sources` command + `search` filters with filter-before-limit semantics).
+- Task 6 completed via subagent commit `5324ed5` (AI skill docs for OpenCode/Claude/Codex).
+- Task 7 completed via subagent commits `c7902ae` and `34d647b` (JSON contract refresh + contract drift guard test).
+- Final orchestration docs commit: `03a0710`.
+
+## 2026-02-27 - Final Verification and Push Attempt
+
+- Verification succeeded: `swift test`, `swift run ads --help`, and `scripts/release/check.sh` all passed.
+- Push attempted to renamed repo `https://github.com/czerwix/ads-cli.git` and SSH fallback; both blocked by local auth configuration (`https` username prompt unavailable, SSH key permission denied).
+
 ## 2026-02-27 - Task 4 Complete
 
 - Task 4 implemented in commit `413c3df` (official docs providers + balanced search merge).

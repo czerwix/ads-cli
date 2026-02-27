@@ -27,6 +27,11 @@ Record key project decisions that were made as implementation defaults during pl
 - Chose hidden project-local worktree directory `.worktrees/` because no existing worktree directory and no `CLAUDE.md` preference were found.
 - Enforced hard cutover to `ads` with no compatibility shim, since no release exists.
 - Added new `SearchResult` taxonomy fields with backward-compatible decoding defaults to avoid breaking legacy JSON payload consumers.
+- Chose resilient multi-provider search policy: continue on individual provider failure, throw only if all providers fail.
+- Chose filter-before-limit behavior for `search` so `--source`, `--kind`, and `--official-only` return up to the requested limit among matching results.
+- Normalized Firebase source identifier to `firebase-docs` for consistent filtering and contracts.
+- Updated `origin` to renamed repository URL `https://github.com/czerwix/ads-cli.git`.
+- Attempted non-interactive HTTPS and SSH pushes; documented local authentication blocker rather than forcing unsafe git config changes.
 
 ## 2026-02-27 ADS v2 Implementation Decisions (Tasks 4-7)
 
