@@ -3,7 +3,7 @@ import ArgumentParser
 public struct SearchCommand: AsyncParsableCommand {
     public static let configuration = CommandConfiguration(
         commandName: "search",
-        abstract: "Search Android, Kotlin, and Jetpack documentation."
+        abstract: "Search Android, Kotlin, Jetpack, Firebase, Play Services, and Material docs."
     )
 
     @Argument(help: "Query text")
@@ -39,14 +39,14 @@ public enum SearchCommandRunner {
         providers: [any DocsProvider],
         client: HTTPClient
     ) async throws -> String {
-        var allResults: [SearchResult] = []
+        var resultsByProvider: [[SearchResult]] = []
 
         for provider in providers {
             let results = try await provider.search(query: query, limit: limit, client: client)
-            allResults.append(contentsOf: results)
+            resultsByProvider.append(results)
         }
 
-        let merged = Array(allResults.prefix(limit))
+        let merged = mergeResults(resultsByProvider, limit: limit)
         switch format {
         case .markdown:
             return MarkdownRenderer.renderSearchResults(query, merged)
@@ -54,12 +54,49 @@ public enum SearchCommandRunner {
             return try JSONRenderer.renderSearchResults(merged)
         }
     }
+
+    private static func mergeResults(_ resultsByProvider: [[SearchResult]], limit: Int) -> [SearchResult] {
+        guard limit > 0 else {
+            return []
+        }
+
+        var merged: [SearchResult] = []
+        var depth = 0
+
+        while merged.count < limit {
+            var appended = false
+
+            for providerResults in resultsByProvider {
+                guard depth < providerResults.count else {
+                    continue
+                }
+
+                merged.append(providerResults[depth])
+                appended = true
+
+                if merged.count == limit {
+                    break
+                }
+            }
+
+            if !appended {
+                break
+            }
+
+            depth += 1
+        }
+
+        return merged
+    }
 }
 
 enum DefaultProviders {
     static let all: [any DocsProvider] = [
         AndroidDocsProvider(),
         KotlinDocsProvider(),
-        JetpackDocsProvider()
+        JetpackDocsProvider(),
+        GooglePlayServicesProvider(),
+        FirebaseDocsProvider(),
+        MaterialDesignProvider()
     ]
 }
