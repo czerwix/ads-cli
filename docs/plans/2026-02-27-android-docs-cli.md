@@ -14,7 +14,7 @@
 
 **Files:**
 - Create: `Package.swift`
-- Create: `Sources/sgd/main.swift`
+- Create: `Sources/ads/main.swift`
 - Create: `Sources/GoogleDocsLib/CLI/RootCommand.swift`
 - Test: `Tests/GoogleDocsLibTests/Smoke/RootCommandSmokeTests.swift`
 
