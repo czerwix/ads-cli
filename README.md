@@ -39,8 +39,8 @@ Optional local sanity check:
 
 Maintainer release references:
 
-- `docs/release-homebrew.md`
-- `docs/plans/2026-02-27-homebrew-release-runbook.md`
+- Primary guide: `docs/release-homebrew.md`
+- Checklist runbook: `docs/plans/2026-02-27-homebrew-release-runbook.md`
 
 ## Build And Run
 

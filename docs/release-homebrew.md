@@ -1,58 +1,65 @@
 # Homebrew Release Maintenance
 
-This guide covers local checks and the end-to-end maintenance flow for publishing `ads` to Homebrew via `skraus/tap`.
+Primary maintainer guide for publishing `ads` to Homebrew (`skraus/tap`).
 
-## Important Note About Formula Checksums
+## Release automation source of truth
 
-`Formula/ads-cli.rb` currently contains placeholder SHA256 values for `v0.1.0`.
+GitHub Actions handles packaging and upload for release assets in `.github/workflows/release.yml`:
 
-You must replace those placeholder SHA values after the first published GitHub release assets are available.
+- Trigger: push a tag matching `v*.*.*`.
+- Build matrix: `macos-14` creates `ads-macos-arm64.tar.gz`, `macos-13` creates `ads-macos-x86_64.tar.gz`.
+- Release job: downloads both archives, generates `checksums.txt`, and uploads all artifacts to the GitHub release.
 
-## Local Verification Checklist
+Do not create both architecture archives from one local build. The published release artifacts are produced by CI per-architecture.
 
-Run these checks before cutting a release:
+## Local pre-tag verification
 
-1. Swift release build check:
+Run local checks only to verify code health before tagging:
+
+1. Build and test:
 
 ```bash
 swift build -c release
+swift test
 ```
 
-2. `ads` binary smoke check:
+2. Smoke check the local binary:
 
 ```bash
 .build/release/ads --help
 .build/release/ads search "compose" --limit 1
 ```
 
-3. Checksum generation verification (for release archives):
+## End-to-end release flow
+
+1. Create and push a release tag:
 
 ```bash
-shasum -a 256 ads-macos-arm64.tar.gz
-shasum -a 256 ads-macos-x86_64.tar.gz
+git tag vX.Y.Z
+git push origin vX.Y.Z
 ```
 
-## End-To-End Homebrew Release Flow
+2. Wait for the `Release` workflow to complete for that tag.
 
-1. Build and package the two macOS archives for the GitHub release:
+3. Confirm the GitHub release contains:
+
+- `ads-macos-arm64.tar.gz`
+- `ads-macos-x86_64.tar.gz`
+- `checksums.txt`
+
+4. Get checksums from published release artifacts (never from arbitrary local rebuild files):
 
 ```bash
-tar -czf ads-macos-arm64.tar.gz ads
-tar -czf ads-macos-x86_64.tar.gz ads
+gh release download vX.Y.Z --repo skraus/ads-cli --pattern checksums.txt --dir /tmp/ads-release-vX.Y.Z
+cat /tmp/ads-release-vX.Y.Z/checksums.txt
 ```
 
-2. Publish a GitHub release in `skraus/ads-cli` with tag `vX.Y.Z` and upload both archives.
+If needed, you can also download both `ads-macos-*.tar.gz` artifacts from the same release and recompute checksums locally to cross-check, but `checksums.txt` from the published release is the canonical source.
 
-3. Wait for release assets to finish uploading and become downloadable.
+5. Update `Formula/ads-cli.rb` in `skraus/tap`:
 
-4. Generate SHA256 values from the final uploaded artifacts:
-
-```bash
-shasum -a 256 ads-macos-arm64.tar.gz
-shasum -a 256 ads-macos-x86_64.tar.gz
-```
-
-5. Update `ads-cli.rb` in `skraus/tap`:
+- set `version "X.Y.Z"`
+- set `sha256` values to the matching values from published `checksums.txt`
 
 ```bash
 git clone git@github.com:skraus/homebrew-tap.git
