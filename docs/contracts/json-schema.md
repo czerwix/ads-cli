@@ -10,7 +10,10 @@ Returns an array of objects:
     "title": "string",
     "url": "string",
     "snippet": "string",
-    "source": "android|kotlin|jetpack",
+    "source": "string",
+    "sourceId": "string",
+    "kind": "reference|guide|sample|api|unknown",
+    "official": true,
     "score": 1.0
   }
 ]
@@ -32,6 +35,36 @@ Returns one object:
 }
 ```
 
+## related (`ads related ... --json`)
+
+Returns an array of objects:
+
+```json
+[
+  {
+    "title": "string",
+    "url": "string",
+    "snippet": "",
+    "source": "related",
+    "sourceId": "related",
+    "kind": "unknown",
+    "official": false,
+    "score": 1.0
+  }
+]
+```
+
+## platform (`ads platform ... --json`)
+
+Returns an object map of platform metadata keys and values:
+
+```json
+{
+  "androidApiLevel": "21",
+  "artifact": "androidx.lifecycle:lifecycle-viewmodel"
+}
+```
+
 ## frameworks (`ads frameworks --json`)
 
 Returns an array:
@@ -42,6 +75,21 @@ Returns an array:
     "name": "string",
     "slug": "string",
     "description": "string"
+  }
+]
+```
+
+## sources (`ads sources --json`)
+
+Returns an array:
+
+```json
+[
+  {
+    "id": "android",
+    "displayName": "Android Developers",
+    "kind": "reference",
+    "official": true
   }
 ]
 ```
