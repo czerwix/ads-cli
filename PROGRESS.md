@@ -17,3 +17,26 @@
 - Task 3 implemented in commit `d9ae40f` (source registry + taxonomy model + tests).
 - Quality fixes applied in `f64438d` (legacy JSON decode compatibility, regression test, parser cleanup).
 - Verified by subagents: targeted tests + full suite passing.
+
+## 2026-02-27 - Task 4 Complete
+
+- Task 4 implemented in commit `413c3df` (official docs providers + balanced search merge).
+- Scope checkpoint: expanded provider coverage beyond initial Android/Kotlin/Jetpack baseline.
+
+## 2026-02-27 - Task 5 Complete
+
+- Task 5 implemented in commit `4648a92` (best-effort provider failure handling in search).
+- Behavior checkpoint: provider-level failures no longer abort successful providers.
+
+## 2026-02-27 - Task 6 Complete
+
+- Task 6 implemented in commit `ba6986a` (sources command + `source`/`kind` search filters).
+- UX checkpoint: source discovery and taxonomy-based filtering exposed through CLI.
+
+## 2026-02-27 - Task 7 Complete
+
+- Task 7 implemented in commit `c16a765` (filter-before-limit semantics in search).
+- Documentation/contract checkpoints after Task 7:
+  - `5324ed5` (AI skill setup + JSON-first agent guidance)
+  - `c7902ae` (v2 JSON contract refresh)
+  - `34d647b` (`kind` enum contract correction + guard)

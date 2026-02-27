@@ -27,3 +27,10 @@ Record key project decisions that were made as implementation defaults during pl
 - Chose hidden project-local worktree directory `.worktrees/` because no existing worktree directory and no `CLAUDE.md` preference were found.
 - Enforced hard cutover to `ads` with no compatibility shim, since no release exists.
 - Added new `SearchResult` taxonomy fields with backward-compatible decoding defaults to avoid breaking legacy JSON payload consumers.
+
+## 2026-02-27 ADS v2 Implementation Decisions (Tasks 4-7)
+
+- Adopted best-effort multi-provider search execution: continue when a provider fails and throw only when all providers fail.
+- Standardized search pipeline semantics to apply filters before final result limiting.
+- Normalized Firebase source identifier to `firebase-docs` for consistent source filtering and contract output.
+- Corrected JSON contract `kind` enum values and added guard coverage to prevent drift between docs and tests.
