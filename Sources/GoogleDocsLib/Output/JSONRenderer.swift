@@ -13,6 +13,10 @@ public enum JSONRenderer {
         try encode(frameworks)
     }
 
+    public static func renderSources(_ sources: [SourceDefinition]) throws -> String {
+        try encode(sources)
+    }
+
     private static func encode<T: Encodable>(_ value: T) throws -> String {
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]

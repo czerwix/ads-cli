@@ -1,4 +1,5 @@
 import ArgumentParser
+import Foundation
 
 public struct SearchCommand: AsyncParsableCommand {
     public static let configuration = CommandConfiguration(
@@ -12,6 +13,15 @@ public struct SearchCommand: AsyncParsableCommand {
     @Option(name: .long, help: "Maximum number of results.")
     var limit: Int = 10
 
+    @Option(name: .long, help: "Filter results by source identifier.")
+    var source: String?
+
+    @Option(name: .long, help: "Filter results by content kind.")
+    var kind: ContentKind?
+
+    @Flag(name: .long, inversion: .prefixedNo, help: "Only include official results.")
+    var officialOnly = true
+
     @Flag(name: .long, help: "Render output as JSON.")
     var json = false
 
@@ -23,6 +33,9 @@ public struct SearchCommand: AsyncParsableCommand {
             query: query,
             limit: limit,
             format: format,
+            source: source,
+            kind: kind,
+            officialOnly: officialOnly,
             providers: DefaultProviders.all,
             client: HTTPClient()
         )
@@ -36,6 +49,9 @@ public enum SearchCommandRunner {
         query: String,
         limit: Int,
         format: RenderFormat,
+        source: String?,
+        kind: ContentKind?,
+        officialOnly: Bool = true,
         providers: [any DocsProvider],
         client: HTTPClient
     ) async throws -> String {
@@ -56,11 +72,18 @@ public enum SearchCommandRunner {
         }
 
         let merged = mergeResults(resultsByProvider, limit: limit)
+        let filtered = applyFilters(
+            merged,
+            source: normalizedSource(source),
+            kind: kind,
+            officialOnly: officialOnly,
+            limit: limit
+        )
         switch format {
         case .markdown:
-            return MarkdownRenderer.renderSearchResults(query, merged)
+            return MarkdownRenderer.renderSearchResults(query, filtered)
         case .json:
-            return try JSONRenderer.renderSearchResults(merged)
+            return try JSONRenderer.renderSearchResults(filtered)
         }
     }
 
@@ -97,6 +120,54 @@ public enum SearchCommandRunner {
 
         return merged
     }
+
+    private static func applyFilters(
+        _ results: [SearchResult],
+        source: String?,
+        kind: ContentKind?,
+        officialOnly: Bool,
+        limit: Int
+    ) -> [SearchResult] {
+        guard limit > 0 else {
+            return []
+        }
+
+        let filtered = results.filter { result in
+            if officialOnly && !result.official {
+                return false
+            }
+
+            if let source, !matchesSource(result, source: source) {
+                return false
+            }
+
+            if let kind, result.kind != kind {
+                return false
+            }
+
+            return true
+        }
+
+        return Array(filtered.prefix(limit))
+    }
+
+    private static func matchesSource(_ result: SearchResult, source: String) -> Bool {
+        let sourceId = result.sourceId.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        if sourceId == source {
+            return true
+        }
+
+        return result.source.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == source
+    }
+
+    private static func normalizedSource(_ source: String?) -> String? {
+        guard let source else {
+            return nil
+        }
+
+        let normalized = source.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        return normalized.isEmpty ? nil : normalized
+    }
 }
 
 enum DefaultProviders {
@@ -109,3 +180,5 @@ enum DefaultProviders {
         MaterialDesignProvider()
     ]
 }
+
+extension ContentKind: ExpressibleByArgument {}

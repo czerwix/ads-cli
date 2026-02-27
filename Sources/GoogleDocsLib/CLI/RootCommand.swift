@@ -8,6 +8,7 @@ public struct RootCommand: AsyncParsableCommand {
         version: "0.1.0",
         subcommands: [
             SearchCommand.self,
+            SourcesCommand.self,
             DocCommand.self,
             RelatedCommand.self,
             PlatformCommand.self,

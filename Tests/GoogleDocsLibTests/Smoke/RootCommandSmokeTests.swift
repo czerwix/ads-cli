@@ -8,5 +8,6 @@ struct RootCommandSmokeTests {
 
         #expect(help.contains("USAGE: ads"))
         #expect(help.contains("search"))
+        #expect(help.contains("sources"))
     }
 }

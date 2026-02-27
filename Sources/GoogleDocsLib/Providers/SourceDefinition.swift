@@ -1,4 +1,4 @@
-public struct SourceDefinition: Equatable, Sendable {
+public struct SourceDefinition: Codable, Equatable, Sendable {
     public let id: String
     public let displayName: String
     public let kind: ContentKind

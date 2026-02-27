@@ -13,7 +13,8 @@ struct SearchCommandTests {
                     url: "https://developer.android.com/develop/ui/compose",
                     snippet: "Build UIs with Compose",
                     source: "android",
-                    score: 1.0
+                    score: 1.0,
+                    official: true
                 )
             ]
         )
@@ -22,6 +23,9 @@ struct SearchCommandTests {
             query: "compose",
             limit: 5,
             format: .markdown,
+            source: nil,
+            kind: nil,
+            officialOnly: true,
             providers: [provider],
             client: HTTPClient(session: .shared, retryPolicy: .init(maxAttempts: 1, baseDelayNanoseconds: 1))
         )
@@ -40,7 +44,8 @@ struct SearchCommandTests {
                     url: "https://kotlinlang.org/docs/home.html",
                     snippet: "Home",
                     source: "kotlin",
-                    score: 1.0
+                    score: 1.0,
+                    official: true
                 )
             ]
         )
@@ -49,6 +54,9 @@ struct SearchCommandTests {
             query: "kotlin",
             limit: 5,
             format: .json,
+            source: nil,
+            kind: nil,
+            officialOnly: true,
             providers: [provider],
             client: HTTPClient(session: .shared, retryPolicy: .init(maxAttempts: 1, baseDelayNanoseconds: 1))
         )
@@ -62,21 +70,21 @@ struct SearchCommandTests {
         let android = StubProvider(
             source: "android",
             results: [
-                SearchResult(title: "A1", url: "https://a/1", snippet: "", source: "android", score: 1.0),
-                SearchResult(title: "A2", url: "https://a/2", snippet: "", source: "android", score: 1.0)
+                SearchResult(title: "A1", url: "https://a/1", snippet: "", source: "android", score: 1.0, official: true),
+                SearchResult(title: "A2", url: "https://a/2", snippet: "", source: "android", score: 1.0, official: true)
             ]
         )
         let kotlin = StubProvider(
             source: "kotlin",
             results: [
-                SearchResult(title: "K1", url: "https://k/1", snippet: "", source: "kotlin", score: 1.0),
-                SearchResult(title: "K2", url: "https://k/2", snippet: "", source: "kotlin", score: 1.0)
+                SearchResult(title: "K1", url: "https://k/1", snippet: "", source: "kotlin", score: 1.0, official: true),
+                SearchResult(title: "K2", url: "https://k/2", snippet: "", source: "kotlin", score: 1.0, official: true)
             ]
         )
         let jetpack = StubProvider(
             source: "jetpack",
             results: [
-                SearchResult(title: "J1", url: "https://j/1", snippet: "", source: "jetpack", score: 1.0)
+                SearchResult(title: "J1", url: "https://j/1", snippet: "", source: "jetpack", score: 1.0, official: true)
             ]
         )
 
@@ -84,6 +92,9 @@ struct SearchCommandTests {
             query: "merge",
             limit: 4,
             format: .json,
+            source: nil,
+            kind: nil,
+            officialOnly: true,
             providers: [android, kotlin, jetpack],
             client: HTTPClient(session: .shared, retryPolicy: .init(maxAttempts: 1, baseDelayNanoseconds: 1))
         )
@@ -98,7 +109,7 @@ struct SearchCommandTests {
         let working = StubProvider(
             source: "kotlin",
             results: [
-                SearchResult(title: "Kotlin docs", url: "https://kotlinlang.org/docs/home.html", snippet: "", source: "kotlin", score: 1.0)
+                SearchResult(title: "Kotlin docs", url: "https://kotlinlang.org/docs/home.html", snippet: "", source: "kotlin", score: 1.0, official: true)
             ]
         )
 
@@ -106,6 +117,9 @@ struct SearchCommandTests {
             query: "kotlin",
             limit: 5,
             format: .json,
+            source: nil,
+            kind: nil,
+            officialOnly: true,
             providers: [failing, working],
             client: HTTPClient(session: .shared, retryPolicy: .init(maxAttempts: 1, baseDelayNanoseconds: 1))
         )
@@ -124,6 +138,9 @@ struct SearchCommandTests {
                 query: "kotlin",
                 limit: 5,
                 format: .json,
+                source: nil,
+                kind: nil,
+                officialOnly: true,
                 providers: [providerA, providerB],
                 client: HTTPClient(session: .shared, retryPolicy: .init(maxAttempts: 1, baseDelayNanoseconds: 1))
             )
@@ -138,6 +155,111 @@ struct SearchCommandTests {
         } catch {
             Issue.record("Unexpected error type: \(error)")
         }
+    }
+
+    @Test
+    func searchRunnerFiltersBySourceIdentifier() async throws {
+        let android = StubProvider(
+            source: "android",
+            results: [
+                SearchResult(title: "Android one", url: "https://a/1", snippet: "", source: "android", score: 1.0, sourceId: "android", official: true),
+                SearchResult(title: "Android two", url: "https://a/2", snippet: "", source: "android", score: 1.0, sourceId: "android", official: true)
+            ]
+        )
+        let kotlin = StubProvider(
+            source: "kotlin",
+            results: [
+                SearchResult(title: "Kotlin one", url: "https://k/1", snippet: "", source: "kotlin", score: 1.0, sourceId: "kotlin", official: true)
+            ]
+        )
+
+        let output = try await SearchCommandRunner.run(
+            query: "docs",
+            limit: 10,
+            format: .json,
+            source: "kotlin",
+            kind: nil,
+            officialOnly: true,
+            providers: [android, kotlin],
+            client: HTTPClient(session: .shared, retryPolicy: .init(maxAttempts: 1, baseDelayNanoseconds: 1))
+        )
+
+        let decoded = try JSONDecoder().decode([SearchResult].self, from: Data(output.utf8))
+        #expect(decoded.map(\.sourceId) == ["kotlin"])
+    }
+
+    @Test
+    func searchRunnerFiltersByKind() async throws {
+        let provider = StubProvider(
+            source: "android",
+            results: [
+                SearchResult(title: "Reference", url: "https://a/ref", snippet: "", source: "android", score: 1.0, kind: .reference, official: true),
+                SearchResult(title: "Guide", url: "https://a/guide", snippet: "", source: "android", score: 1.0, kind: .guide, official: true)
+            ]
+        )
+
+        let output = try await SearchCommandRunner.run(
+            query: "docs",
+            limit: 10,
+            format: .json,
+            source: nil,
+            kind: .guide,
+            officialOnly: true,
+            providers: [provider],
+            client: HTTPClient(session: .shared, retryPolicy: .init(maxAttempts: 1, baseDelayNanoseconds: 1))
+        )
+
+        let decoded = try JSONDecoder().decode([SearchResult].self, from: Data(output.utf8))
+        #expect(decoded.map(\.title) == ["Guide"])
+    }
+
+    @Test
+    func searchRunnerExcludesUnofficialResultsByDefault() async throws {
+        let provider = StubProvider(
+            source: "android",
+            results: [
+                SearchResult(title: "Unofficial", url: "https://x/1", snippet: "", source: "android", score: 1.0, official: false),
+                SearchResult(title: "Official", url: "https://x/2", snippet: "", source: "android", score: 1.0, official: true)
+            ]
+        )
+
+        let output = try await SearchCommandRunner.run(
+            query: "docs",
+            limit: 10,
+            format: .json,
+            source: nil,
+            kind: nil,
+            providers: [provider],
+            client: HTTPClient(session: .shared, retryPolicy: .init(maxAttempts: 1, baseDelayNanoseconds: 1))
+        )
+
+        let decoded = try JSONDecoder().decode([SearchResult].self, from: Data(output.utf8))
+        #expect(decoded.map(\.title) == ["Official"])
+    }
+
+    @Test
+    func searchRunnerCanIncludeUnofficialResultsWhenFlagDisabled() async throws {
+        let provider = StubProvider(
+            source: "android",
+            results: [
+                SearchResult(title: "Unofficial", url: "https://x/1", snippet: "", source: "android", score: 1.0, official: false),
+                SearchResult(title: "Official", url: "https://x/2", snippet: "", source: "android", score: 1.0, official: true)
+            ]
+        )
+
+        let output = try await SearchCommandRunner.run(
+            query: "docs",
+            limit: 10,
+            format: .json,
+            source: nil,
+            kind: nil,
+            officialOnly: false,
+            providers: [provider],
+            client: HTTPClient(session: .shared, retryPolicy: .init(maxAttempts: 1, baseDelayNanoseconds: 1))
+        )
+
+        let decoded = try JSONDecoder().decode([SearchResult].self, from: Data(output.utf8))
+        #expect(decoded.map(\.title) == ["Unofficial", "Official"])
     }
 }
 
