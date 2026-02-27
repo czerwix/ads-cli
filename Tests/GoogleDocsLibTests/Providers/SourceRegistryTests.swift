@@ -9,6 +9,9 @@ struct SourceRegistryTests {
         #expect(ids.contains("android"))
         #expect(ids.contains("kotlin"))
         #expect(ids.contains("jetpack"))
+        #expect(ids.contains("google-play-services"))
+        #expect(ids.contains("firebase-docs"))
+        #expect(ids.contains("material-design"))
     }
 
     @Test

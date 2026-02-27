@@ -91,6 +91,54 @@ struct SearchCommandTests {
         let decoded = try JSONDecoder().decode([SearchResult].self, from: Data(output.utf8))
         #expect(decoded.map(\.title) == ["A1", "K1", "J1", "A2"])
     }
+
+    @Test
+    func searchRunnerContinuesWhenAProviderFails() async throws {
+        let failing = ThrowingProvider(source: "android")
+        let working = StubProvider(
+            source: "kotlin",
+            results: [
+                SearchResult(title: "Kotlin docs", url: "https://kotlinlang.org/docs/home.html", snippet: "", source: "kotlin", score: 1.0)
+            ]
+        )
+
+        let output = try await SearchCommandRunner.run(
+            query: "kotlin",
+            limit: 5,
+            format: .json,
+            providers: [failing, working],
+            client: HTTPClient(session: .shared, retryPolicy: .init(maxAttempts: 1, baseDelayNanoseconds: 1))
+        )
+
+        let decoded = try JSONDecoder().decode([SearchResult].self, from: Data(output.utf8))
+        #expect(decoded.map(\.title) == ["Kotlin docs"])
+    }
+
+    @Test
+    func searchRunnerThrowsClearErrorWhenAllProvidersFail() async {
+        let providerA = ThrowingProvider(source: "android")
+        let providerB = ThrowingProvider(source: "kotlin")
+
+        do {
+            _ = try await SearchCommandRunner.run(
+                query: "kotlin",
+                limit: 5,
+                format: .json,
+                providers: [providerA, providerB],
+                client: HTTPClient(session: .shared, retryPolicy: .init(maxAttempts: 1, baseDelayNanoseconds: 1))
+            )
+            Issue.record("Expected all providers to fail")
+        } catch let error as CLIError {
+            guard case let .network(message) = error else {
+                Issue.record("Expected network error")
+                return
+            }
+
+            #expect(message == "Search failed for all providers.")
+        } catch {
+            Issue.record("Unexpected error type: \(error)")
+        }
+    }
 }
 
 private struct StubProvider: DocsProvider {
@@ -111,5 +159,17 @@ private struct StubProvider: DocsProvider {
             relatedLinks: [],
             metadata: [:]
         )
+    }
+}
+
+private struct ThrowingProvider: DocsProvider {
+    let source: String
+
+    func search(query: String, limit: Int, client: HTTPClient) async throws -> [SearchResult] {
+        throw CLIError.network("Provider unavailable")
+    }
+
+    func doc(pathOrURL: String, client: HTTPClient) async throws -> DocumentPage {
+        throw CLIError.network("Provider unavailable")
     }
 }

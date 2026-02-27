@@ -40,10 +40,19 @@ public enum SearchCommandRunner {
         client: HTTPClient
     ) async throws -> String {
         var resultsByProvider: [[SearchResult]] = []
+        var failedProviders = 0
 
         for provider in providers {
-            let results = try await provider.search(query: query, limit: limit, client: client)
-            resultsByProvider.append(results)
+            do {
+                let results = try await provider.search(query: query, limit: limit, client: client)
+                resultsByProvider.append(results)
+            } catch {
+                failedProviders += 1
+            }
+        }
+
+        if failedProviders == providers.count {
+            throw CLIError.network("Search failed for all providers.")
         }
 
         let merged = mergeResults(resultsByProvider, limit: limit)

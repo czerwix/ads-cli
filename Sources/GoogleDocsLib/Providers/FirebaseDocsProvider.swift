@@ -1,7 +1,7 @@
 import Foundation
 
 public struct FirebaseDocsProvider: DocsProvider {
-    public let source = "firebase"
+    public let source = "firebase-docs"
 
     public init() {}
 
@@ -21,6 +21,6 @@ public struct FirebaseDocsProvider: DocsProvider {
     }
 
     public static func parseSearchHTML(_ html: String, limit: Int) -> [SearchResult] {
-        SearchHTMLParser.parse(html: html, baseURL: "https://firebase.google.com", source: "firebase", limit: limit)
+        SearchHTMLParser.parse(html: html, baseURL: "https://firebase.google.com", source: "firebase-docs", limit: limit)
     }
 }

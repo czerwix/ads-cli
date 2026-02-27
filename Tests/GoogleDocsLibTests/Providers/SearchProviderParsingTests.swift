@@ -61,7 +61,7 @@ struct SearchProviderParsingTests {
 
         #expect(results.count == 1)
         #expect(results.first?.url == "https://firebase.google.com/docs/crashlytics/get-started")
-        #expect(results.first?.sourceId == "firebase")
+        #expect(results.first?.sourceId == "firebase-docs")
         #expect(results.first?.kind == .reference)
         #expect(results.first?.official == true)
     }
