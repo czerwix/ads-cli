@@ -6,10 +6,10 @@ Search Android, Kotlin, and Jetpack documentation from the terminal.
 
 ## Install
 
-Homebrew (tap `skraus/tap`):
+Homebrew (tap `czerwix/tap`):
 
 ```bash
-brew tap skraus/tap
+brew tap czerwix/tap
 brew install ads-cli
 ```
 
