@@ -1,17 +1,17 @@
 ---
 name: ads-docs-cli
-description: Use when users need Android, Kotlin, or Jetpack documentation lookup from terminal commands. Trigger this skill for Google docs search, topic path or URL resolution, related or platform metadata lookup, source or kind filtering, official-only filtering, and JSON-first outputs for automation or agent workflows.
+description: Use when users need Android, Kotlin, Jetpack, Firebase, Google Play Services, or Material documentation lookup from terminal commands. Trigger this skill for Google docs search, topic path or URL resolution, related or platform metadata lookup, source or kind filtering, official-only filtering, and JSON-first outputs for automation or agent workflows.
 ---
 
 # ads Docs Skill
 
-Use `ads` for deterministic Android/Kotlin/Jetpack docs retrieval.
+Use `ads` for deterministic Android/Kotlin/Jetpack/Firebase/Play Services/Material docs retrieval.
 
 Default to `--json` when the result will be parsed, transformed, compared, or used by another tool.
 
 ## When To Use
 
-- User asks for Android, Kotlin, Jetpack, or Google developer docs lookup.
+- User asks for Android, Kotlin, Jetpack, Firebase, Play Services, Material, or Google developer docs lookup.
 - User needs a topic resolved from a path or URL.
 - User asks for related topics or platform metadata.
 - User needs scriptable output for automation (`--json`).
@@ -37,6 +37,17 @@ Default to `--json` when the result will be parsed, transformed, compared, or us
 5. Expand context if needed:
    - `ads related "<path-or-url>" --json`
    - `ads platform "<path-or-url>" --json`
+
+## v0.1.3 Behavior Notes
+
+- `search` now re-ranks merged provider results by query-token relevance before final limiting.
+- Search results deduplicate by canonical URL before `--limit` is applied.
+- Parsing suppresses common nav/chrome anchors and infers better `kind` values where possible.
+- For `viewmodel` intent, if strict filtered provider results are empty, a narrow canonical Android fallback can return:
+  - `https://developer.android.com/topic/libraries/architecture/viewmodel`
+  - `https://developer.android.com/reference/androidx/lifecycle/ViewModel`
+- That fallback still respects `--source`, `--kind`, and `--official-only`.
+- `ads sources --json` includes relevance metadata fields (`preferredPathPrefixes`, `blockedTitlePhrases`, `blockedURLFragments`) in addition to `id`, `displayName`, `kind`, and `official`.
 
 ## Usage Scenarios And Examples
 
@@ -82,6 +93,12 @@ Automation-ready search:
 
 ```bash
 ads search "navigation" --source android --kind guide --limit 5 --json
+```
+
+ViewModel canonical reference only:
+
+```bash
+ads search "viewmodel" --kind reference --limit 5 --json
 ```
 
 ### `sources`

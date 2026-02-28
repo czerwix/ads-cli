@@ -2,6 +2,8 @@
 
 Install the custom `ads-docs-cli` skill from this repository for OpenCode, Claude Code, or Codex CLI.
 
+The skill is tuned for Android, Kotlin, Jetpack, Firebase, Google Play Services, and Material docs workflows.
+
 Skill source file:
 
 `skill/SKILL.md`
@@ -100,12 +102,19 @@ Use JSON output for stable parsing:
 ads sources --json
 ads search "viewmodel" --json
 ads search "viewmodel" --source android --json
+ads search "viewmodel" --kind reference --json
 ads search "navigation" --kind guide --json
 ads doc "topic/libraries/architecture/viewmodel" --json
 ads related "topic/libraries/architecture/viewmodel" --json
 ads platform "topic/libraries/architecture/viewmodel" --json
 ads frameworks --json
 ```
+
+For `v0.1.3`, remember:
+
+- `search` re-ranks by query relevance and deduplicates canonical URLs before limit.
+- `viewmodel` can return canonical Android fallback results when strict provider parsing yields none.
+- `sources --json` now includes relevance metadata fields (`preferredPathPrefixes`, `blockedTitlePhrases`, `blockedURLFragments`).
 
 Suggested command flow:
 

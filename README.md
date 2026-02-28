@@ -1,12 +1,13 @@
 # ads
 
-Search Android, Kotlin, and Jetpack documentation from the terminal.
+Search Android, Kotlin, Jetpack, Firebase, Google Play Services, and Material docs from the terminal.
 
 Fast docs lookup, clean output, and JSON for automation.
 
 ## Contents
 
 - [Quick Start](#quick-start)
+- [What's New in v0.1.3](#whats-new-in-v013)
 - [Build and Run](#build-and-run)
 - [Command Reference](#command-reference)
 - [Human CLI Usage](#human-cli-usage)
@@ -44,6 +45,14 @@ Local help check:
 ```
 
 Built binary: `.build/release/ads`
+
+## What's New in v0.1.3
+
+- Search relevance ranking is query-aware across merged provider results, with title and URL token matching.
+- Search results deduplicate canonical URLs before applying `--limit`.
+- HTML parsing suppresses common nav/chrome noise links and infers better `kind` metadata (`guide`, `reference`, etc.).
+- `ads search "viewmodel"` now returns canonical Android ViewModel guide/reference fallback results when strict provider parsing yields no matches.
+- Fallback behavior still respects `--source`, `--kind`, and `--official-only` filters.
 
 ## Build and Run
 
@@ -93,6 +102,7 @@ Default output is Markdown. Add `--json` for structured output.
 ```bash
 ads search "viewmodel" --limit 5 --json
 ads search "viewmodel" --source android --json
+ads search "viewmodel" --kind reference --json
 ads search "navigation" --kind guide --json
 ads sources --json
 ads doc "topic/libraries/architecture/viewmodel" --json
@@ -143,7 +153,7 @@ Full setup and troubleshooting guide: `docs/ai-skill.md`.
 
 Current behavior:
 
-- `search` fans out across Android, Kotlin, and Jetpack providers.
+- `search` fans out across Android, Kotlin, Jetpack, Firebase, Google Play Services, and Material providers.
 - `doc`, `related`, and `platform` currently resolve content via the Android docs provider.
 - `frameworks` returns a local framework catalog in Markdown or JSON.
 
