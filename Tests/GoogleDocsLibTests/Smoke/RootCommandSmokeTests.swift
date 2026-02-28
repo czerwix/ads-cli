@@ -3,6 +3,11 @@ import Testing
 
 struct RootCommandSmokeTests {
     @Test
+    func rootCommandVersionMatchesCurrentRelease() {
+        #expect(RootCommand.configuration.version == "0.1.4")
+    }
+
+    @Test
     func helpReflectsAdsNamingAndIncludesSearchSubcommand() throws {
         let help = RootCommand.helpMessage()
 
