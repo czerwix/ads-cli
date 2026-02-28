@@ -4,7 +4,15 @@ import Testing
 struct RootCommandSmokeTests {
     @Test
     func rootCommandVersionMatchesCurrentRelease() {
-        #expect(RootCommand.configuration.version == "0.1.4")
+        #expect(RootCommand.configuration.version == "0.1.5")
+    }
+
+    @Test
+    func rootCommandOverviewMentionsAllSupportedSources() {
+        #expect(
+            RootCommand.configuration.abstract
+                == "Search Android, Kotlin, Jetpack, Firebase, Play Services, and Material docs."
+        )
     }
 
     @Test
