@@ -10,7 +10,7 @@ public struct FirebaseDocsProvider: DocsProvider {
         let url = URL(string: "https://firebase.google.com/search?query=\(encoded)")!
         let response = try await client.get(url: url)
         let html = String(decoding: response.data, as: UTF8.self)
-        return Self.parseSearchHTML(html, limit: limit)
+        return Self.parseSearchHTML(html, query: query, limit: limit)
     }
 
     public func doc(pathOrURL: String, client: HTTPClient) async throws -> DocumentPage {
@@ -21,6 +21,16 @@ public struct FirebaseDocsProvider: DocsProvider {
     }
 
     public static func parseSearchHTML(_ html: String, limit: Int) -> [SearchResult] {
-        SearchHTMLParser.parse(html: html, baseURL: "https://firebase.google.com", source: "firebase-docs", limit: limit)
+        parseSearchHTML(html, query: nil, limit: limit)
+    }
+
+    public static func parseSearchHTML(_ html: String, query: String?, limit: Int) -> [SearchResult] {
+        SearchHTMLParser.parse(
+            html: html,
+            baseURL: "https://firebase.google.com",
+            source: "firebase-docs",
+            query: query,
+            limit: limit
+        )
     }
 }

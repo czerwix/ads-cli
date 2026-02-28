@@ -36,13 +36,13 @@ struct MarkdownSnapshotTests {
         let readme = try String(contentsOf: readmeURL(), encoding: .utf8)
 
         let requiredSections = [
-            "## Install",
-            "## Build And Run",
-            "## Command Surface",
+            "## Quick Start",
+            "## Build and Run",
+            "## Command Reference",
             "## Human CLI Usage",
-            "## AI-Agent Usage",
-            "## AI Skill",
-            "## Scope And Direction"
+            "## AI Agent Usage",
+            "## AI Agent Skill",
+            "## Scope and Direction"
         ]
 
         var previousStart = readme.startIndex

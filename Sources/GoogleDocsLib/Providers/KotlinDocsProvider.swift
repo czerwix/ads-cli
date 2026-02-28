@@ -10,7 +10,7 @@ public struct KotlinDocsProvider: DocsProvider {
         let url = URL(string: "https://kotlinlang.org/docs/search.html?q=\(encoded)")!
         let response = try await client.get(url: url)
         let html = String(decoding: response.data, as: UTF8.self)
-        return Self.parseSearchHTML(html, limit: limit)
+        return Self.parseSearchHTML(html, query: query, limit: limit)
     }
 
     public func doc(pathOrURL: String, client: HTTPClient) async throws -> DocumentPage {
@@ -28,6 +28,16 @@ public struct KotlinDocsProvider: DocsProvider {
     }
 
     public static func parseSearchHTML(_ html: String, limit: Int) -> [SearchResult] {
-        SearchHTMLParser.parse(html: html, baseURL: "https://kotlinlang.org", source: "kotlin", limit: limit)
+        parseSearchHTML(html, query: nil, limit: limit)
+    }
+
+    public static func parseSearchHTML(_ html: String, query: String?, limit: Int) -> [SearchResult] {
+        SearchHTMLParser.parse(
+            html: html,
+            baseURL: "https://kotlinlang.org",
+            source: "kotlin",
+            query: query,
+            limit: limit
+        )
     }
 }
